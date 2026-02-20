@@ -2,6 +2,33 @@
 use App\Models\Contact;
 
 
-// TODO: Create the update contact test
-it('returns a updated contact', function () {
+it('returns an updated contact', function () {
+    $attributes = Contact::factory()->raw();
+    $response = $this->putJson('/api/v1/contacts/1', $attributes);
+    $response->assertStatus(201)
+        ->assertJsonStructure(
+            ['id', 'given_name', 'family_name', 'nick_name', 'title']
+        );
+    $this->assertDatabaseHas('contacts', $attributes);
+});
+
+it('returns update contact error when missing given name', function () {
+    $attributes = Contact::factory()->raw();
+    unset($attributes['given_name']);
+
+    $response = $this->postJson('/api/v1/contacts/2', $attributes);
+    $response->assertStatus(422)
+        ->assertJsonStructure([
+            'message',
+            'errors' => ['given_name']
+        ]);
+
+    // Beware that you may have multiple contacts with same
+    // given name, so assert on a unique subset of attributes
+    // to avoid false positives
+    $this->assertDatabaseMissing('contacts', [
+        'family_name' => $attributes['family_name'],
+        'nick_name' => $attributes['nick_name'],
+        'title' => $attributes['title'],
+    ]);
 });
