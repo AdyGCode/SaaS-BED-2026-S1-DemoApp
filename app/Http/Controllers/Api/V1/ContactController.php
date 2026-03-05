@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreContactRequest;
 use App\Http\Requests\UpdateContactRequest;
+use App\Http\Resources\ContactResource;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 
@@ -20,8 +21,17 @@ class ContactController extends Controller
      */
     public function index()
     {
-        $contacts = Contact::paginate(2)
-            ->toResourceCollection();
+        // Paginate the contacts
+        $contacts = Contact::paginate(5);
+        // Strangely when I remove the line below, the response data
+        // is the full contact details, not our defined fields from the
+        // contact resource...
+        //
+        // My thoughts are that it is filtering the contact data to be
+        // just the fields we require, then when the data is JSONified
+        // it uses this data.
+        $resource = ContactResource::collection(resource: $contacts);
+
         return response()->json($contacts);
     }
 
