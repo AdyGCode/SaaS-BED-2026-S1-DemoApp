@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -42,12 +43,38 @@ class Contact extends Model
         ];
     }
 
+    /**
+     * List of custom calculated attributes to append to the
+     * output from queries, without calling methods to create
+     * the required detail.
+     *
+     * @var string[]
+     */
+    protected $appends = ['full_name',];
 
-    public function fullname()
+    /**
+     * A calculated full name attribute that is available directly
+     * as a 'field' from the contact model.
+     *
+     * For use, see ContactResource
+     *
+     * @return Attribute
+     */
+    protected function fullName(): Attribute
     {
-        $given =  $this->given_name ?? '';
+        $given = $this->given_name ?? '';
         $family = $this->family_name ?? '';
-        $fullname = Str::trim($given.' '.$family);
-        return $fullname;
+        return new Attribute(
+            get: fn() => Str::trim($given.' '.$family),
+        );
     }
+
+
+//    public function fullname()
+//    {
+//        $given = $this->given_name ?? '';
+//        $family = $this->family_name ?? '';
+//        $fullname = Str::trim($given.' '.$family);
+//        return $fullname;
+//    }
 }

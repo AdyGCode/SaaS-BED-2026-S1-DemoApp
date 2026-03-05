@@ -20,6 +20,7 @@ class ContactResource extends JsonResource
             'given_name'=> $this->given_name,
             'family_name'=> $this->family_name,
             'nick_name'=> $this->nick_name,
+            'full_name' => $this->full_name,
             // no created at / updated at
         ];
     }
