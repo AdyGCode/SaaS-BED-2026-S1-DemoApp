@@ -45,9 +45,6 @@ it('returns a deleted contact', function () {
 });
 
 
-
-
-
 // TODO: Create the missing given name when creating a contact test
 it('returns an error when new contact is missing given name', function () {
 
